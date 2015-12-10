@@ -165,13 +165,6 @@ class ODLTable(object):
             if flow.clean_id == clean_id:
                 return flow
 
-        # Try to get in operational flows
-        flows = self.get_operational_flows()
-        for flow in flows.values():
-            print flow.clean_id, clean_id
-            if flow.clean_id == clean_id:
-                return flow
-
     def get_config_flows_by_name(self, name):
         """
         Return a list of config flows based on name.
@@ -183,6 +176,16 @@ class ODLTable(object):
                 result.append(flow)
 
         return result
+
+    def put_flow_from_data_json(self, data, flow):
+        """
+        Insert a flow in this table (config endpoint) based on raw json data.
+        """
+        odl_instance = self.node.odl_instance
+        endpoint = self.config_endpoint + 'flow/' + str(flow)
+        return odl_instance.put(endpoint,
+                                data=data,
+                                content="application/yang.data+json")
 
     def put_flow_from_data(self, data, flow):
         """
